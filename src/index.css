@@ -50,8 +50,20 @@
     @apply text-lg font-bold font-primary;
   }
 
+  html,
+  body {
+  }
   body {
     @apply text-sm font-primary md:text-base;
+    background-image: url('./img/davies-designs-studio-G-6kwVnClsE-unsplash.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  input,
+  button,
+  textarea {
+    outline: none;
   }
 
   .layout {
