@@ -1,36 +1,50 @@
-import React, { useState } from 'react';
-
 //Icons
 import { TiWeatherPartlySunny } from 'react-icons/ti';
 import { BsSearch } from 'react-icons/bs';
+
+//Imports
 import { useSetWeatherData } from '../contexts/WeatherContext';
+import React, { useState } from 'react';
 
 const SearchBox = () => {
+  //State
   const [input, setInput] = useState('');
+  const [error, setError] = useState(false);
   const setWeatherData = useSetWeatherData();
 
   const apiKey = '6a1047eef44439b4087e822b1243851a';
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${input}&units=metric&appid=${apiKey}`
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        return setWeatherData(data);
-      });
+    getData();
+
     setInput('');
+  };
+
+  const getData = async () => {
+    try {
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${input}&units=metric&appid=${apiKey}`
+      );
+
+      if (!response.ok)
+        throw new Error(`${response.status}, An error has ocurred`);
+      const data = await response.json();
+      setError(false);
+      setWeatherData(data);
+    } catch (e) {
+      console.log(e);
+      setError(true);
+      setWeatherData(null);
+    }
   };
 
   const handleInput = (e) => {
     setInput(e.target.value);
-    console.log(e.target.value);
   };
 
   return (
-    <div className='w-full border-2 border-transparent rounded-lg flex flex-col '>
+    <div className='w-full border-2 border-transparent rounded-lg flex flex-col mb-10 '>
       {/* Header */}
       <div className='flex items-center'>
         <h2 className='bg-gradient-to-r from-primary-500 to-primary-400 text-transparent bg-clip-text'>
@@ -47,10 +61,12 @@ const SearchBox = () => {
           onChange={handleInput}
           value={input}
         />
+
         <button className=' p-2 cursor-pointer'>
           <BsSearch size='2rem' />
         </button>
       </form>
+      {error && <p className='text-red-400 ml-2'>Sorry... City not found!</p>}
     </div>
   );
 };
